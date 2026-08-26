@@ -1,0 +1,101 @@
+.certifications-section {
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.certs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.cert-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+}
+
+.cert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cert-issuer-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.15);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.cert-card:hover .cert-issuer-badge {
+  color: var(--accent-indigo);
+  background: rgba(var(--accent-purple-rgb), 0.08);
+  border-color: rgba(var(--accent-purple-rgb), 0.15);
+}
+
+.cert-date {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.cert-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.cert-issuer {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--accent-indigo);
+  margin-bottom: 16px;
+}
+
+.cert-details {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-bottom: 24px;
+}
+
+.cert-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto; /* Push tags to bottom of card */
+}
+
+.cert-tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 3px 8px;
+  border-radius: 4px;
+  transition: var(--transition-smooth);
+}
+
+.cert-card:hover .cert-tag {
+  color: var(--text-secondary);
+  border-color: rgba(var(--accent-purple-rgb), 0.1);
+}
+
+/* Responsive Grid styling */
+@media (max-width: 768px) {
+  .certs-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

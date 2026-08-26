@@ -1,0 +1,92 @@
+.achievements-section {
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.achievement-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+}
+
+.achievement-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.achievement-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: rgba(6, 182, 212, 0.08);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(6, 182, 212, 0.15);
+  transition: var(--transition-smooth);
+}
+
+.achievement-card:hover .achievement-icon-box {
+  background: rgba(var(--accent-purple-rgb), 0.08);
+  color: var(--accent-indigo);
+  border-color: rgba(var(--accent-purple-rgb), 0.15);
+  transform: translateY(-2px);
+}
+
+.achievement-badge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent-indigo);
+  background: rgba(var(--accent-purple-rgb), 0.08);
+  border: 1px solid rgba(var(--accent-purple-rgb), 0.15);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.achievement-card:hover .achievement-badge {
+  color: var(--accent-cyan);
+  background: rgba(6, 182, 212, 0.08);
+  border-color: rgba(6, 182, 212, 0.15);
+}
+
+.achievement-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.achievement-subtitle {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.achievement-desc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-top: auto; /* Push down to line up card content */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .achievements-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
