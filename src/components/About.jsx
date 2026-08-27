@@ -51,6 +51,22 @@ const About = () => {
         </div>
 
         <div className="about-grid">
+          {/* About Image Container */}
+          <div className="about-image-wrapper">
+            <div className="about-image-frame">
+              <img 
+                src="/devansh.jpeg" 
+                alt="Devansh Parashar — Aspiring Software Development Engineer and Full-Stack Developer" 
+                className="about-profile-photo"
+                loading="lazy"
+                width="240"
+                height="280"
+              />
+              <div className="about-image-scanner"></div>
+            </div>
+            <span className="about-image-tag">SYS.PROFILE // ACTIVE</span>
+          </div>
+
           {/* Summary Narrative */}
           <div className="about-text">
             <h3 className="about-heading">

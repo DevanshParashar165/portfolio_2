@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import './Hero.css';
 
-const Hero = () => {
+const Hero = ({ theme }) => {
   const canvasRef = useRef(null);
+  const tiltRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -30,7 +31,7 @@ const Hero = () => {
         this.vx = (Math.random() - 0.5) * 0.4;
         this.vy = (Math.random() - 0.5) * 0.4;
         this.size = Math.random() * 2 + 1;
-        // Half cyan, half purple
+        // Color based on active theme
         this.color = Math.random() > 0.5 ? '#8b5cf6' : '#06b6d4';
       }
 
@@ -48,10 +49,20 @@ const Hero = () => {
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < mouse.radius) {
             const force = (mouse.radius - dist) / mouse.radius;
-            // Pull nodes smoothly toward cursor
             this.x -= dx * force * 0.015;
             this.y -= dy * force * 0.015;
           }
+        }
+
+        // Dynamically adjust color according to current theme class in body
+        if (document.body.classList.contains('theme-cyberpunk')) {
+          this.color = Math.random() > 0.5 ? '#ff007f' : '#00ffff';
+        } else if (document.body.classList.contains('theme-minimal')) {
+          this.color = Math.random() > 0.5 ? '#18181b' : '#71717a';
+        } else if (document.body.classList.contains('theme-terminal')) {
+          this.color = '#33ff33';
+        } else {
+          this.color = Math.random() > 0.5 ? '#8b5cf6' : '#06b6d4';
         }
       }
 
@@ -59,7 +70,7 @@ const Hero = () => {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
-        ctx.shadowBlur = 8;
+        ctx.shadowBlur = document.body.classList.contains('theme-minimal') ? 0 : 8;
         ctx.shadowColor = this.color;
         ctx.fill();
         ctx.shadowBlur = 0; // reset
@@ -83,7 +94,17 @@ const Hero = () => {
 
           if (dist < connectionDist) {
             const alpha = (1 - dist / connectionDist) * 0.12;
-            ctx.strokeStyle = `rgba(139, 92, 246, ${alpha})`;
+            let strokeColor = `rgba(139, 92, 246, ${alpha})`;
+
+            if (document.body.classList.contains('theme-cyberpunk')) {
+              strokeColor = `rgba(255, 0, 127, ${alpha * 1.5})`;
+            } else if (document.body.classList.contains('theme-minimal')) {
+              strokeColor = `rgba(24, 24, 27, ${alpha * 0.8})`;
+            } else if (document.body.classList.contains('theme-terminal')) {
+              strokeColor = `rgba(0, 255, 0, ${alpha * 1.5})`;
+            }
+
+            ctx.strokeStyle = strokeColor;
             ctx.lineWidth = 0.8;
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
@@ -137,82 +158,191 @@ const Hero = () => {
     }
   };
 
+  const handleTiltMove = (e) => {
+    if (window.innerWidth <= 768) return;
+    const card = tiltRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const xc = rect.width / 2;
+    const yc = rect.height / 2;
+    
+    // Subtly rotate card by max ~8 degrees
+    const tiltX = (yc - y) / 18;
+    const tiltY = (x - xc) / 18;
+    
+    card.style.transform = `perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.02, 1.02, 1.02)`;
+    
+    const glow = card.querySelector('.profile-glow');
+    if (glow) {
+      glow.style.transform = `translate3d(${(x - xc) / 8}px, ${(y - yc) / 8}px, 0)`;
+    }
+  };
+
+  const handleTiltLeave = () => {
+    const card = tiltRef.current;
+    if (!card) return;
+    card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+    
+    const glow = card.querySelector('.profile-glow');
+    if (glow) {
+      glow.style.transform = `translate3d(0, 0, 0)`;
+    }
+  };
+
   return (
     <section id="home" className="hero-section">
       <canvas ref={canvasRef} className="hero-canvas"></canvas>
       
       <div className="container hero-container">
-        <div className="hero-content">
-          <div className="hero-badge animate-fade-in-1">
-            <span className="badge-pulse"></span>
-            <span>Available for SDE Roles &amp; Internships</span>
-          </div>
-          
-          <h1 className="hero-name animate-fade-in-2">Devansh Parashar</h1>
-          
-          <h2 className="hero-headline animate-fade-in-3">
-            Aspiring Software Development Engineer <br />
-            <span className="text-gradient-purple"> &amp; Full-Stack Developer</span>
-          </h2>
-          
-          <p className="hero-description animate-fade-in-4">
-            Pursuing a B.Tech in Information Technology at ABES Engineering College. Skilled in compiling optimized MERN Stack applications, Data Structures &amp; Algorithms, RESTful APIs, and responsive real-time engines.
-          </p>
-
-          <div className="hero-skills-strip animate-fade-in-5">
-            <span className="strip-item">MERN Core</span>
-            <span className="strip-divider">/</span>
-            <span className="strip-item">Data Structures &amp; Algorithms</span>
-            <span className="strip-divider">/</span>
-            <span className="strip-item">Socket.IO &amp; WebRTC</span>
-            <span className="strip-divider">/</span>
-            <span className="strip-item">System Architectures</span>
-          </div>
-
-          <div className="hero-actions animate-fade-in-6">
-            <button 
-              className="btn btn-primary"
-              onClick={() => handleScrollTo('projects')}
-            >
-              View Projects
-              <svg className="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </button>
-            <button 
-              className="btn btn-secondary"
-              onClick={() => handleScrollTo('contact')}
-            >
-              Contact Me
-            </button>
-
-            {/* Social Icons inside actions strip */}
-            <div className="hero-socials">
-              <a 
-                href="https://github.com/devanshparashar" 
-                target="_blank" 
-                rel="noreferrer" 
-                aria-label="GitHub Profile" 
-                className="social-btn"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
-                </svg>
-              </a>
-              <a 
-                href="https://linkedin.com/in/devanshparashar" 
-                target="_blank" 
-                rel="noreferrer" 
-                aria-label="LinkedIn Profile" 
-                className="social-btn"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                  <rect x="2" y="9" width="4" height="12" />
-                  <circle cx="4" cy="4" r="2" />
-                </svg>
-              </a>
+        <div className="hero-grid">
+          {/* Left Column - Text Details */}
+          <div className="hero-left hero-content">
+            <div className="hero-badge animate-fade-in-1">
+              <span className="badge-pulse"></span>
+              <span>Available for SDE Roles &amp; Internships</span>
             </div>
+            
+            <h1 className="hero-name animate-fade-in-2">Devansh Parashar</h1>
+            
+            <h2 className="hero-headline animate-fade-in-3">
+              Aspiring Software Development Engineer <br />
+              <span className="text-gradient-purple"> &amp; Full-Stack Developer</span>
+            </h2>
+            
+            <p className="hero-description animate-fade-in-4">
+              Pursuing a B.Tech in Information Technology at ABES Engineering College. Skilled in compiling optimized MERN Stack applications, Data Structures &amp; Algorithms, RESTful APIs, and responsive real-time engines.
+            </p>
+
+            <div className="hero-skills-strip animate-fade-in-5">
+              <span className="strip-item">MERN Core</span>
+              <span className="strip-divider">/</span>
+              <span className="strip-item">Data Structures &amp; Algorithms</span>
+              <span className="strip-divider">/</span>
+              <span className="strip-item">Socket.IO &amp; WebRTC</span>
+              <span className="strip-divider">/</span>
+              <span className="strip-item">System Architectures</span>
+            </div>
+
+            <div className="hero-actions animate-fade-in-6">
+              <button 
+                className="btn btn-primary"
+                onClick={() => handleScrollTo('projects')}
+              >
+                View Projects
+                <svg className="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </button>
+              <button 
+                className="btn btn-secondary"
+                onClick={() => handleScrollTo('contact')}
+              >
+                Contact Me
+              </button>
+
+              <div className="hero-socials">
+                <a 
+                  href="https://github.com/devanshparashar" 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  aria-label="GitHub Profile" 
+                  className="social-btn"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+                  </svg>
+                </a>
+                <a 
+                  href="https://linkedin.com/in/devanshparashar" 
+                  target="_blank" 
+                  rel="noreferrer" 
+                  aria-label="LinkedIn Profile" 
+                  className="social-btn"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                    <rect x="2" y="9" width="4" height="12" />
+                    <circle cx="4" cy="4" r="2" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Premium Profile Image */}
+          <div className="hero-right">
+            {theme === 'terminal' ? (
+              <div className="terminal-profile-panel animate-fade-in-right">
+                <div className="terminal-header">
+                  <div className="terminal-dots">
+                    <span className="dot red"></span>
+                    <span className="dot yellow"></span>
+                    <span className="dot green"></span>
+                  </div>
+                  <span className="terminal-title">profile.sh</span>
+                </div>
+                <div className="terminal-body">
+                  <div className="terminal-line">
+                    <span className="terminal-prompt">$</span> whoami
+                  </div>
+                  <div className="terminal-output">Devansh Parashar</div>
+                  
+                  <div className="terminal-line">
+                    <span className="terminal-prompt">$</span> role
+                  </div>
+                  <div className="terminal-output text-wrap">
+                    Aspiring Software Development Engineer &amp; Full-Stack Developer
+                  </div>
+                  
+                  <div className="terminal-line">
+                    <span className="terminal-prompt">$</span> view --photo
+                  </div>
+                  <div className="terminal-image-container">
+                    <img 
+                      src="/devansh.jpeg" 
+                      alt="Devansh Parashar — Aspiring Software Development Engineer and Full-Stack Developer" 
+                      className="profile-photo terminal-photo"
+                      width="350"
+                      height="380"
+                      loading="eager"
+                    />
+                    <div className="terminal-scanlines"></div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div 
+                className="profile-image-wrapper animate-fade-in-right"
+                ref={tiltRef}
+                onMouseMove={handleTiltMove}
+                onMouseLeave={handleTiltLeave}
+              >
+                {/* Developer UI Labels around container */}
+                <div className="tech-tag tag-top-left">DEVANSHPARASHAR.DEV</div>
+                <div className="tech-tag tag-bottom-right">STATUS: BUILDING</div>
+                <div className="tech-tag tag-top-right">ROLE: FULL-STACK</div>
+                
+                <div className="profile-image-container">
+                  <div className="profile-glow"></div>
+                  <div className="tech-grid-overlay"></div>
+                  <div className="tech-border-ring ring-1"></div>
+                  <div className="tech-border-ring ring-2"></div>
+                  
+                  <img 
+                    src="/devansh.jpeg" 
+                    alt="Devansh Parashar — Aspiring Software Development Engineer and Full-Stack Developer" 
+                    className="profile-photo"
+                    width="350"
+                    height="420"
+                    loading="eager"
+                  />
+                  
+                  <div className="micro-interaction-label">Hello 👋</div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

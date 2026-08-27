@@ -16,6 +16,15 @@ import Footer from './components/Footer';
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('portfolio-theme') || 'midnight';
+  });
+
+  useEffect(() => {
+    document.body.classList.remove('theme-midnight', 'theme-cyberpunk', 'theme-minimal', 'theme-terminal');
+    document.body.classList.add(`theme-${theme}`);
+    localStorage.setItem('portfolio-theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -65,10 +74,10 @@ function App() {
         <div className="bg-grid"></div>
         <div className="bg-radial-gradient"></div>
         
-        <Navbar />
+        <Navbar theme={theme} setTheme={setTheme} />
         
         <main style={{ visibility: isLoaded ? 'visible' : 'hidden' }}>
-          <Hero />
+          <Hero theme={theme} />
           <About />
           <Skills />
           <Projects />

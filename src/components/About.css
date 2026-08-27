@@ -6,10 +6,127 @@
 
 .about-grid {
   display: grid;
-  grid-template-columns: 1.25fr 1fr;
-  gap: 48px;
+  grid-template-columns: 0.9fr 1.35fr 1fr;
+  gap: 44px;
   align-items: center;
   margin-bottom: 60px;
+}
+
+/* About Section Profile Image */
+.about-image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 250px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.about-image-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-smooth);
+}
+
+.about-profile-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(100%);
+  transition: var(--transition-smooth);
+}
+
+.about-image-wrapper:hover .about-profile-photo {
+  filter: grayscale(0%);
+  transform: scale(1.03);
+}
+
+.about-image-wrapper:hover .about-image-frame {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-lg), var(--glow-purple);
+}
+
+/* Cyberpunk specific frame */
+.theme-cyberpunk .about-image-frame {
+  border: 2px solid var(--accent-purple);
+  box-shadow: 0 0 15px rgba(255, 0, 127, 0.15);
+}
+
+.theme-cyberpunk .about-image-wrapper:hover .about-image-frame {
+  box-shadow: 0 0 25px rgba(255, 0, 127, 0.35);
+  border-color: var(--accent-cyan);
+}
+
+/* Terminal Mode specific photo styling */
+.theme-terminal .about-profile-photo {
+  filter: grayscale(100%) brightness(85%) contrast(120%) sepia(20%) hue-rotate(85deg);
+}
+
+.theme-terminal .about-image-frame {
+  border: 2px solid #00ff00;
+  border-radius: 4px;
+}
+
+.theme-terminal .about-image-tag {
+  color: #00ff00 !important;
+  font-family: var(--font-mono);
+}
+
+/* Minimal White specific photo styling */
+.theme-minimal .about-image-frame {
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+.theme-minimal .about-profile-photo {
+  filter: grayscale(0%);
+}
+
+/* Scanner Line animation */
+.about-image-scanner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.about-image-wrapper:hover .about-image-scanner {
+  opacity: 0.8;
+  animation: scanLoop 2s linear infinite;
+}
+
+@keyframes scanLoop {
+  0% {
+    top: 0%;
+  }
+  50% {
+    top: 100%;
+  }
+  100% {
+    top: 0%;
+  }
+}
+
+.about-image-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
 .about-text {
@@ -88,7 +205,8 @@
 .info-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 16px;
   padding-bottom: 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
@@ -102,12 +220,16 @@
   font-family: var(--font-mono);
   font-size: 0.85rem;
   color: var(--text-muted);
+  flex-shrink: 0;
+  padding-top: 2px;
 }
 
 .info-value {
   font-size: 0.95rem;
   color: var(--text-primary);
   font-weight: 500;
+  text-align: right;
+  word-break: break-word;
 }
 
 .info-value.text-highlight {
